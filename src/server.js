@@ -1,3 +1,5 @@
+import "./db";
+import "./models/Video";
 import express from "express";
 import morgan from "morgan";
 import globalRouter from "./routers/globalRouter";
@@ -11,6 +13,9 @@ const app = express();
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 app.use(morgan("tiny"));
+app.use(express.urlencoded({ extended: true }));
+
+// routers
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
 app.use("/", globalRouter);
