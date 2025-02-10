@@ -1,49 +1,24 @@
-const videos = [
-  {
-    title: "Video#1",
-    rating: 5,
-    comments: 2,
-    createdAt: "2 minutes ago",
-    views: 59,
-    id: 1,
-  },
-  {
-    title: "Video#2",
-    rating: 5,
-    comments: 2,
-    createdAt: "2 minutes ago",
-    views: 11,
-    id: 2,
-  },
-  {
-    title: "Video#3",
-    rating: 5,
-    comments: 2,
-    createdAt: "2 minutes ago",
-    views: 59,
-    id: 3,
-  },
-];
+import Video from "../models/Video";
 
-export const trending = (req, res) => {
-  return res.render("home", { pageTitle: "Home", videos });
+export const home = async (req, res) => {
+  const videos = await Video.find({});
+  // console.log(videos);
+  res.render("home", { pageTitle: "Home", videos });
 };
+
 export const watch = (req, res) => {
   const { id } = req.params;
-  const video = videos[id - 1];
-  return res.render("watch", { pageTitle: `Watching ${video.title}`, video });
+  return res.render("watch", { pageTitle: `Watching` });
 };
 
 export const getEdit = (req, res) => {
   const { id } = req.params;
-  const video = videos[id - 1];
-  return res.render("edit", { pageTitle: `Editing ${video.title}`, video });
+  return res.render("edit", { pageTitle: `Editing` });
 };
 
 export const postEdit = (req, res) => {
   const { id } = req.params;
   const newTitle = req.body.title;
-  videos[id - 1].title = newTitle;
   return res.redirect(`/videos/${id}`);
 };
 
@@ -51,17 +26,27 @@ export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload" });
 };
 
-export const postUpload = (req, res) => {
+export const postUpload = async (req, res) => {
   //here we will add a video to the videos array.
-  const { title } = req.body;
-  const newVideo = {
-    title: title,
-    rating: 0,
-    comments: 0,
-    createdAt: "0 minutes ago",
-    views: 0,
-    id: videos.length + 1,
-  };
-  videos.push(newVideo);
-  return res.redirect("/");
+  const { title, description, hashtags } = req.body;
+  try {
+    await Video.create({
+      title,
+      description,
+      hashtags: hashtags.split(",").map((word) => {
+        word = word.trim();
+        if (!word.startsWith("#")) {
+          return `#${word}`;
+        } else {
+          return word;
+        }
+      }),
+    });
+    return res.redirect("/");
+  } catch (error) {
+    return res.render("upload", {
+      pageTitle: "Upload",
+      errorMessage: error._message,
+    });
+  }
 };
