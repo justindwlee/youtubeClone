@@ -5,9 +5,16 @@ html(lang="ko")
         link(rel="stylesheet" href="https://unpkg.com/mvp.css")
     body 
         header           
-            h1=pageTitle         
+            h1=pageTitle
+            nav
+                ul 
+                    li 
+                        a(href="/") 🏠Home
+                    li 
+                        a(href="/videos/upload") Upload Video
+                    li
+                        a(href="/search") Search Video      
         main
             block content
-            div
-                a(href="/") Go Home 🏠
+                
     include partials/footer
