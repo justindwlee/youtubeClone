@@ -7,16 +7,16 @@ html(lang="ko")
         header           
             h1 #{pageTitle}
             if loggedIn 
-                h3 Welcome #{loggedInUser.name}!
+                h3 Welcome #{loggedInUser.username}!
             nav
                 ul 
                     li 
                         a(href="/") 🏠Home
                     if loggedIn
                         li 
-                            a(href="/my-profile") #{loggedInUser.name}의 Profile            
+                            a(href="/my-profile") #{loggedInUser.username}의 Profile            
                         li 
-                            a(href="/logout") Logout 
+                            a(href="/users/logout") Logout 
                     else 
                         li 
                             a(href="/join") Join
