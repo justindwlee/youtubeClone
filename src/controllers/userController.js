@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Video from "../models/Video";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) =>
@@ -102,7 +103,6 @@ export const finishGithubLogin = async (req, res) => {
         },
       })
     ).json();
-    console.log(userData);
     const emailData = await (
       await fetch(`${apiUrl}/user/emails`, {
         headers: {
@@ -148,9 +148,10 @@ export const getEdit = (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id, email: sessionEmail, user: sessionUser },
+      user: { _id, email: sessionEmail, username: sessionUsername, avatarUrl },
     },
     body: { email, name, username, location },
+    file,
   } = req;
   const pageTitle = "Edit Profile";
   // if the user is trying to update username or email, check if it is already taken
@@ -163,7 +164,7 @@ export const postEdit = async (req, res) => {
       });
     }
   }
-  if (sessionUser !== username) {
+  if (sessionUsername !== username) {
     const usernameExists = await User.exists({ username });
     if (usernameExists) {
       return res.status(400).render("edit-profile", {
@@ -175,6 +176,7 @@ export const postEdit = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
+      avatarUrl: file ? file.path : avatarUrl,
       name,
       email,
       username,
@@ -194,7 +196,6 @@ export const getChangePassword = (req, res) => {
 };
 
 export const postChangePassword = async (req, res) => {
-  console.log(req.body);
   const pageTitle = "Change Password";
   const {
     session: {
@@ -221,4 +222,15 @@ export const postChangePassword = async (req, res) => {
   return res.redirect("/users/logout");
 };
 
-export const see = (req, res) => res.send("See user profile");
+export const see = async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id).populate("videos");
+  if (!user) {
+    return res.status(404).render("404", { pageTitle: "User not found." });
+  }
+  console.log(user);
+  res.render("users/profile", {
+    pageTitle: `${user.username} Profile`,
+    user,
+  });
+};
