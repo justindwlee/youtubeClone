@@ -119,7 +119,9 @@ export const search = async (req, res) => {
       title: {
         $regex: new RegExp(keyword, "i"),
       },
-    }).sort({ createdAt: "desc" });
+    })
+      .sort({ createdAt: "desc" })
+      .populate("owner");
   }
   return res.render("search", { pageTitle: "Search Videos", videos });
 };
