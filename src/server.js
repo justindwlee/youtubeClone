@@ -5,6 +5,7 @@ import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import apiRouter from "./routers/apiRouter";
 import session from "express-session";
+import flash from "express-flash";
 import { localsMiddleware } from "./middlewares";
 import MongoStore from "connect-mongo";
 
@@ -28,8 +29,9 @@ app.use(
   })
 );
 
+//middlewares
+app.use(flash());
 app.use(localsMiddleware);
-
 app.use((req, res, next) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Cross-Origin-Opener-Policy", "same-origin");

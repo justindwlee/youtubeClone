@@ -16,9 +16,9 @@ export const postJoin = async (req, res) => {
   }
   const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
+    req.flash("error", "This username/email is already taken.");
     return res.status(400).render("join", {
       pageTitle,
-      errorMessage: "This username/email is already taken.",
     });
   }
   try {
@@ -29,6 +29,8 @@ export const postJoin = async (req, res) => {
       password,
       location,
     });
+    req.flash("success", "Account");
+
     return res.redirect("/login");
   } catch (error) {
     return res.status(400).render("join", {
@@ -46,21 +48,22 @@ export const postLogin = async (req, res) => {
   const pageTitle = "Login";
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
+    req.flash("error", "The account does not exist.");
     return res.status(400).render("login", {
       pageTitle,
-      errorMessage: "The account does not exist.",
     });
   }
   //check if the password input is correct by comparing hashes
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
+    req.flash("error", "Password does not match.");
     return res.status(400).render("login", {
       pageTitle,
-      errorMessage: "Password does not match.",
     });
   }
   req.session.loggedIn = true;
   req.session.user = user;
+  req.flash("success", `Welcome ${user.username}!`);
   return res.redirect("/");
 };
 
@@ -137,7 +140,10 @@ export const finishGithubLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  req.session.destroy();
+  req.session.user = undefined;
+  req.session.loggedIn = false;
+  // req.session.destroy();
+  req.flash("info", "Bye bye!🖐️");
   return res.redirect("/");
 };
 
@@ -158,18 +164,18 @@ export const postEdit = async (req, res) => {
   if (sessionEmail !== email) {
     const emailExists = await User.exists({ email });
     if (emailExists) {
+      req.flash("error", "This email is already taken.");
       return res.status(400).render("edit-profile", {
         pageTitle,
-        errorMessage: "This email is already taken.",
       });
     }
   }
   if (sessionUsername !== username) {
     const usernameExists = await User.exists({ username });
     if (usernameExists) {
+      req.flash("error", "This username is already taken.");
       return res.status(400).render("edit-profile", {
         pageTitle,
-        errorMessage: "This username is already taken.",
       });
     }
   }
@@ -185,11 +191,13 @@ export const postEdit = async (req, res) => {
     { new: true }
   );
   req.session.user = updatedUser;
+  req.flash("success", "Update Successful!");
   return res.redirect(`/users/${_id}`);
 };
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly === true) {
+    req.flash("error", "Cannot change password");
     return res.redirect("/");
   }
   return res.render("users/change-password", { pageTitle: "Change Password" });
@@ -206,19 +214,20 @@ export const postChangePassword = async (req, res) => {
   const user = await User.findById(_id);
   const ok = await bcrypt.compare(oldPassword, user.password);
   if (!ok) {
+    req.flash("error", "The current password is incorrect.");
     return res.status(400).render("users/change-password", {
       pageTitle,
-      errorMessage: "The current password is incorrect.",
     });
   }
   if (newPassword !== newPassword2) {
+    req.flash("error", "The new password does not match the confirmation.");
     return res.status(400).render("users/change-password", {
       pageTitle,
-      errorMessage: "The new password does not match the confirmation.",
     });
   }
   user.password = newPassword;
   await user.save();
+  req.flash("info", "Password updated ");
   return res.redirect("/users/logout");
 };
 
@@ -228,7 +237,6 @@ export const see = async (req, res) => {
   if (!user) {
     return res.status(404).render("404", { pageTitle: "User not found." });
   }
-  console.log(user);
   res.render("users/profile", {
     pageTitle: `${user.username} Profile`,
     user,

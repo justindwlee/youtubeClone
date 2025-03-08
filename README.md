@@ -1,16 +1,11 @@
 # Youtube Clone Project (Lecture by Nomad Coders)
 
-/ -> Home
-/join -> Join
-/login -> Login
-/search -> Search
+Reviewing Todo List
 
-/users/:id -> See user
-/users/logout -> Log Out
-/users/edit -> Edit MY Profile
-/users/delete -> Delete MY Profile
+#7 Github Login Review
+#8.10~15 Review
+(#9 Review)
+(#12 Review)
+#15 Adding flash messages for all the redirects
 
-/videos/:id -> See Video
-/videos/:id/edit -> Edit Video
-/videos/:id/delete -> Delete Video
-/videos/upload -> Upload Video
+-Cleaning up views file. Sorting them into folders/modifying directory paths in view files when extending base.
