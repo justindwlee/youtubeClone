@@ -28,6 +28,7 @@ export const getEdit = async (req, res) => {
     return res.render("404", { pageTitle: "404 Video Not Found" });
   }
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "Editing not allowed!");
     return res.status(403).redirect("/");
   }
   return res.render("edit", { pageTitle: `Editing ${video.title}`, video });
@@ -52,7 +53,7 @@ export const postEdit = async (req, res) => {
     description,
     hashtags: Video.formatHashtags(hashtags),
   });
-  req.flash("success", "Changes saved.");
+  req.flash("success", "Changes saved!");
   return res.redirect(`/videos/${id}`);
 };
 
@@ -85,11 +86,13 @@ export const postUpload = async (req, res) => {
     const user = await User.findById(_id);
     user.videos.push(newVideo._id);
     user.save();
+    req.flash("success", "Video uploaded!");
     return res.redirect("/");
   } catch (error) {
+    console.log("NOOO!");
+    req.flash("error", `${error.message}`);
     return res.status(400).render("upload", {
       pageTitle: "Upload",
-      errorMessage: error._message,
     });
   }
 };
@@ -105,11 +108,13 @@ export const deleteVideo = async (req, res) => {
     return res.status(404).render("404", { pageTitle: "404 Video Not Found" });
   }
   if (String(video.owner) !== String(_id)) {
+    req.flash("error", "Cannot delete video.");
     return res.status(403).redirect("/");
   }
   await Video.findByIdAndDelete(id);
   user.videos.splice(user.videos.indexOf(id), 1);
   user.save();
+  req.flash("success", "Video deleted!");
   return res.redirect("/");
 };
 
