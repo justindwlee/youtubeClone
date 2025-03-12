@@ -108,7 +108,10 @@ const handleMouseLeave = () => {
 };
 
 const handleSpacebar = (event) => {
-  if (event.key === " " || event.keyCode === 32) {
+  if (
+    document.activeElement === video &&
+    (event.key === " " || event.keyCode === 32)
+  ) {
     event.preventDefault();
     handlePlayClick();
   }
