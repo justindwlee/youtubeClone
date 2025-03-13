@@ -1,18 +1,38 @@
 .video__data {
-  margin: 20px 0;
+  margin: 12px 0;
   display: flex;
   flex-direction: column;
-  .video__title {
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 15px;
+  .video__data__header {
+    display: flex;
+    justify-content: space-between;
+    .video__title {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .video__edit-delete {
+      a {
+        margin-left: 6px;
+        padding: 8px 3px;
+        border-radius: 5px;
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+        font-weight: 400;
+      }
+      .video__edit-btn {
+        background-color: $blue;
+      }
+      .video__delete-btn {
+        background-color: rgba($color: #780000, $alpha: 1);
+      }
+    }
   }
   .video__owner {
     margin-bottom: 5px;
     font-size: 16px;
     a {
       color: cornflowerblue;
-      text-decoration: underline;
     }
   }
   .video__createdAt {
@@ -26,18 +46,52 @@
     padding: 15px 8px;
     font-size: 16px;
     margin-bottom: 30px;
+    .hashtags {
+      margin-top: 25px;
+      color: cornflowerblue;
+    }
   }
 }
+
+.video__comment-form {
+  display: flex;
+  flex-direction: column;
+
+  textarea {
+    border-radius: 10px;
+    padding: 10px;
+    width: 90%;
+    max-width: 700px;
+    margin-right: 10px;
+    font-size: 14px;
+    background-color: aliceblue;
+  }
+
+  .video__add-comment-btn {
+    margin-top: 10px;
+    padding: 10px 5px;
+    width: 110px;
+    background-color: $blue;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 1px 1px 2px $bg;
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
 .video__comments {
   display: flex;
   flex-direction: column;
   max-width: 620px;
   width: 100%;
   margin: 0;
-  margin-left: 30px;
+  margin-left: 10px;
   margin-top: 20px;
   .video__comment {
     display: flex;
+    align-items: center;
     padding: 10px;
     border-radius: 6px;
     background-color: aliceblue;
@@ -48,6 +102,10 @@
       height: 35px;
       border-radius: 18px;
       margin-right: 7px;
+    }
+    .video__comment__deleteBtn {
+      margin-left: auto;
+      cursor: pointer;
     }
   }
 }
