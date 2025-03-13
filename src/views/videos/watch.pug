@@ -1,4 +1,4 @@
-extends base
+extends ../base
 
 block content
     div#videoContainer(data-id=video._id)
@@ -20,12 +20,13 @@ block content
                 span#fullScreen
                     i.fas.fa-expand
     
-    //- div
-    //-     p=video.description
-    //-     small=video.createdAt
-    //- div
-    //-     small Uploaded by 
-    //-         a(href=`/users/${video.owner._id}`)=video.owner.name
+    div.video__data
+        h2.video__title=video.title
+        small.video__owner Uploaded by 
+            a(href=`/users/${video.owner._id}`)=video.owner.username
+        small.video__createdAt=video.createdAt
+        p.video__description=video.description
+
     if String(video.owner._id) === String(loggedInUser._id)
         a(href=`${video.id}/edit`) Edit Video &rarr;
         br
@@ -40,7 +41,6 @@ block content
             each comment in video.comments.reverse()
                 li.video__comment(data-id=comment.id)
                     img(src="/"+comment.owner.avatarUrl)
-                    i.fas.fa-comment
                     span &nbsp;#{comment.owner.username}: #{comment.text}
                     if String(comment.owner._id) === String(loggedInUser._id)
                         span.video__comment__deleteBtn ❌

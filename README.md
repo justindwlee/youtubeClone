@@ -6,8 +6,7 @@ Reviewing Todo List
 #8.10~15 Review
 (#9 Review)
 (#12 Review)
-#15 Adding flash messages for all the redirects
 
--Cleaning up views file. Sorting them into folders/modifying directory paths in view files when extending base.
-
--need to fix the problem of the comments array in the Video Model just adding infinitely
+Additional features to consider adding:
+2 댓글 수정기능
+3 댓글 좋아요

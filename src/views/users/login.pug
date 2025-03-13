@@ -1,4 +1,4 @@
-extends base 
+extends ../base 
 
 block content 
     if errorMessage 
@@ -7,7 +7,7 @@ block content
         input(name="username", type="text", required, placeholder="Username")
         input(name="password", type="password", required, placeholder="Password")
         input(type="submit" value="Login")
-        include partials/social-login
+        include ../partials/social-login
     div.auth-switch
         span Don't have an account? Sign up here!  
         a(href="/join") Join &rarr;

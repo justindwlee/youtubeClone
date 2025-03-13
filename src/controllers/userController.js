@@ -3,13 +3,13 @@ import Video from "../models/Video";
 import bcrypt from "bcrypt";
 
 export const getJoin = (req, res) =>
-  res.render("join", { pageTitle: "Join Here" });
+  res.render("users/join", { pageTitle: "Join Here" });
 
 export const postJoin = async (req, res) => {
   const { name, email, username, password, password2, location } = req.body;
   const pageTitle = "Join";
   if (password !== password2) {
-    return res.status(400).render("join", {
+    return res.status(400).render("users/join", {
       pageTitle,
       errorMessage: "Passwords does not match.",
     });
@@ -17,7 +17,7 @@ export const postJoin = async (req, res) => {
   const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
     req.flash("error", "This username/email is already taken.");
-    return res.status(400).render("join", {
+    return res.status(400).render("users/join", {
       pageTitle,
     });
   }
@@ -33,7 +33,7 @@ export const postJoin = async (req, res) => {
 
     return res.redirect("/login");
   } catch (error) {
-    return res.status(400).render("join", {
+    return res.status(400).render("users/join", {
       pageTitle: "Join",
       errorMessage: error._message,
     });
@@ -41,7 +41,7 @@ export const postJoin = async (req, res) => {
 };
 
 export const getLogin = (req, res) =>
-  res.render("login", { pageTitle: "Login" });
+  res.render("users/login", { pageTitle: "Login" });
 
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
@@ -57,7 +57,7 @@ export const postLogin = async (req, res) => {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     req.flash("error", "Password does not match.");
-    return res.status(400).render("login", {
+    return res.status(400).render("users/login", {
       pageTitle,
     });
   }
@@ -148,7 +148,7 @@ export const logout = (req, res) => {
 };
 
 export const getEdit = (req, res) => {
-  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+  return res.render("users/edit-profile", { pageTitle: "Edit Profile" });
 };
 
 export const postEdit = async (req, res) => {
@@ -165,7 +165,7 @@ export const postEdit = async (req, res) => {
     const emailExists = await User.exists({ email });
     if (emailExists) {
       req.flash("error", "This email is already taken.");
-      return res.status(400).render("edit-profile", {
+      return res.status(400).render("users/edit-profile", {
         pageTitle,
       });
     }
@@ -174,7 +174,7 @@ export const postEdit = async (req, res) => {
     const usernameExists = await User.exists({ username });
     if (usernameExists) {
       req.flash("error", "This username is already taken.");
-      return res.status(400).render("edit-profile", {
+      return res.status(400).render("users/edit-profile", {
         pageTitle,
       });
     }

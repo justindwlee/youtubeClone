@@ -22,7 +22,7 @@ export const watch = async (req, res) => {
   if (!video) {
     return res.render("404", { pageTitle: "404 Video Not Found" });
   }
-  return res.render("watch", { pageTitle: video.title, video });
+  return res.render("videos/watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {
@@ -38,7 +38,10 @@ export const getEdit = async (req, res) => {
     req.flash("error", "Editing not allowed!");
     return res.status(403).redirect("/");
   }
-  return res.render("edit", { pageTitle: `Editing ${video.title}`, video });
+  return res.render("videos/edit", {
+    pageTitle: `Editing ${video.title}`,
+    video,
+  });
 };
 
 export const postEdit = async (req, res) => {
@@ -65,7 +68,7 @@ export const postEdit = async (req, res) => {
 };
 
 export const getUpload = (req, res) => {
-  return res.render("upload", { pageTitle: "Upload" });
+  return res.render("videos/upload", { pageTitle: "Upload" });
 };
 
 export const postUpload = async (req, res) => {
@@ -98,7 +101,7 @@ export const postUpload = async (req, res) => {
   } catch (error) {
     console.log("NOOO!");
     req.flash("error", `${error.message}`);
-    return res.status(400).render("upload", {
+    return res.status(400).render("videos/upload", {
       pageTitle: "Upload",
     });
   }
@@ -137,7 +140,7 @@ export const search = async (req, res) => {
       .sort({ createdAt: "desc" })
       .populate("owner");
   }
-  return res.render("search", { pageTitle: "Search Videos", videos });
+  return res.render("videos/search", { pageTitle: "Search Videos", videos });
 };
 
 export const registerView = async (req, res) => {
@@ -181,7 +184,6 @@ export const deleteComment = async (req, res) => {
     user: { _id: userId },
   } = req.session;
   const { id: commentId } = req.params;
-  console.log(userId, commentId);
 
   const comment = await Comment.findById(commentId);
   if (!comment) {
@@ -195,5 +197,9 @@ export const deleteComment = async (req, res) => {
   if (!result) {
     return res.status(404);
   }
+  const video = await Video.findById(comment.video);
+  const commentIndex = video.comments.indexOf(commentId);
+  video.comments.splice(commentIndex, 1);
+  video.save();
   return res.sendStatus(204);
 };

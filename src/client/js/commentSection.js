@@ -5,12 +5,10 @@ const deleteBtns = document.querySelectorAll(".video__comment__deleteBtn");
 const addComment = (text, id, user) => {
   const videoComments = document.querySelector(".video__comments ul");
   const newComment = document.createElement("li");
-  const icon = document.createElement("i");
   const span = document.createElement("span");
   const span2 = document.createElement("span");
   const img = document.createElement("img");
 
-  icon.className = "fas fa-comment";
   span.innerText = ` ${user.username}: ${text}`;
   span2.innerText = "❌";
   span2.addEventListener("click", handleDeleteComment);
@@ -19,7 +17,6 @@ const addComment = (text, id, user) => {
   newComment.dataset.id = id;
 
   newComment.appendChild(img);
-  newComment.appendChild(icon);
   newComment.appendChild(span);
   newComment.appendChild(span2);
   videoComments.prepend(newComment);
@@ -51,11 +48,15 @@ const handleDeleteComment = async (event) => {
   const parentComment = event.target.parentElement;
   const commentId = parentComment.dataset.id;
 
-  const response = await fetch(`/api/comments/${commentId}`, {
-    method: "DELETE",
-  });
-  if (response.status === 204) {
-    parentComment.remove();
+  const confirmed = confirm("Are you sure you want to delete?");
+
+  if (confirmed) {
+    const response = await fetch(`/api/comments/${commentId}`, {
+      method: "DELETE",
+    });
+    if (response.status === 204) {
+      parentComment.remove();
+    }
   }
 };
 
