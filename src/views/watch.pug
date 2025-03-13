@@ -39,10 +39,11 @@ block content
         ul
             each comment in video.comments.reverse()
                 li.video__comment(data-id=comment.id)
-                    img(src="/"+video.owner.avatarUrl)
+                    img(src="/"+comment.owner.avatarUrl)
                     i.fas.fa-comment
-                    span &nbsp;#{video.owner.username}: #{comment.text}
-                    span ❌
+                    span &nbsp;#{comment.owner.username}: #{comment.text}
+                    if String(comment.owner._id) === String(loggedInUser._id)
+                        span.video__comment__deleteBtn ❌
                 
 
 block scripts
