@@ -11,6 +11,7 @@ const fullScreenBtn = document.getElementById("fullScreen");
 const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
+const deleteBtn = document.querySelector(".video__delete-btn");
 
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
@@ -124,6 +125,13 @@ const handleEnded = () => {
   });
 };
 
+const handleDeleteBtnClick = (event) => {
+  const confirmed = confirm("Are you sure you want to delete?");
+  if (!confirmed) {
+    event.preventDefault();
+  }
+};
+
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMuteClick);
 volumeRange.addEventListener("input", handleVolumeChange);
@@ -136,3 +144,4 @@ videoContainer.addEventListener("mouseleave", handleMouseLeave);
 timeline.addEventListener("input", handleTimelineChange);
 fullScreenBtn.addEventListener("click", handleFullscreen);
 document.addEventListener("keydown", handleSpacebar);
+deleteBtn.addEventListener("click", handleDeleteBtnClick);
