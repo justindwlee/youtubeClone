@@ -1,6 +1,7 @@
 import User from "../models/User";
 import Video from "../models/Video";
 import bcrypt from "bcrypt";
+import convertS3UrlToCloudFrontUrl from "../utils/s3ToCloudFront";
 
 export const getJoin = (req, res) =>
   res.render("users/join", { pageTitle: "Join Here" });
@@ -159,6 +160,7 @@ export const postEdit = async (req, res) => {
     body: { email, name, username, location },
     file,
   } = req;
+
   const pageTitle = "Edit Profile";
   // if the user is trying to update username or email, check if it is already taken
   if (sessionEmail !== email) {
@@ -182,7 +184,7 @@ export const postEdit = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.path : avatarUrl,
+      avatarUrl: file ? convertS3UrlToCloudFrontUrl(file.location) : avatarUrl,
       name,
       email,
       username,

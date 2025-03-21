@@ -1,6 +1,7 @@
 import Video from "../models/Video";
 import User from "../models/User";
 import Comment from "../models/Comment";
+import convertS3UrlToCloudFrontUrl from "../utils/s3ToCloudFront";
 
 export const home = async (req, res) => {
   const videos = await Video.find({})
@@ -88,8 +89,8 @@ export const postUpload = async (req, res) => {
     const newVideo = await Video.create({
       title,
       description,
-      fileUrl: video[0].path,
-      thumbUrl: thumb[0].path,
+      fileUrl: convertS3UrlToCloudFrontUrl(video[0].location),
+      thumbUrl: convertS3UrlToCloudFrontUrl(thumb[0].location),
       owner: _id,
       hashtags: Video.formatHashtags(hashtags),
     });
