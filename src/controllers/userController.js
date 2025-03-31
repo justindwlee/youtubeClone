@@ -2,6 +2,7 @@ import User from "../models/User";
 import Video from "../models/Video";
 import bcrypt from "bcrypt";
 import convertS3UrlToCloudFrontUrl from "../utils/s3ToCloudFront";
+import { deleteS3File } from "../middlewares";
 
 export const getJoin = (req, res) =>
   res.render("users/join", { pageTitle: "Join Here" });
@@ -180,6 +181,11 @@ export const postEdit = async (req, res) => {
         pageTitle,
       });
     }
+  }
+  if (file) {
+    await deleteS3File(
+      decodeURIComponent(avatarUrl.split(".cloudfront.net/").pop())
+    );
   }
   const updatedUser = await User.findByIdAndUpdate(
     _id,

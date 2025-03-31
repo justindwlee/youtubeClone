@@ -1,5 +1,5 @@
 import multer from "multer";
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 
 const s3Client = new S3Client({
@@ -27,6 +27,22 @@ const s3VideoStorage = multerS3({
     cb(null, `videos/${req.session.user._id}/${Date.now().toString()}`);
   },
 });
+
+export const deleteS3File = async (key) => {
+  const params = {
+    Bucket: "youtubeclone-delicate-smoke-9951",
+    Key: key,
+  };
+
+  try {
+    const command = new DeleteObjectCommand(params);
+    await s3Client.send(command);
+    console.log(`Deleted ${key} from S3`);
+  } catch (err) {
+    console.error(`S3's error: ${err}`);
+    throw err;
+  }
+};
 
 export const localsMiddleware = (req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.loggedIn);

@@ -2,6 +2,7 @@ import Video from "../models/Video";
 import User from "../models/User";
 import Comment from "../models/Comment";
 import convertS3UrlToCloudFrontUrl from "../utils/s3ToCloudFront";
+import { deleteS3File } from "../middlewares";
 
 export const home = async (req, res) => {
   const videos = await Video.find({})
@@ -122,6 +123,12 @@ export const deleteVideo = async (req, res) => {
     req.flash("error", "Cannot delete video.");
     return res.status(403).redirect("/");
   }
+  await deleteS3File(
+    decodeURIComponent(video.fileUrl.split(".cloudfront.net/").pop())
+  );
+  await deleteS3File(
+    decodeURIComponent(video.thumbUrl.split(".cloudfront.net/").pop())
+  );
   await Video.findByIdAndDelete(id);
   user.videos.splice(user.videos.indexOf(id), 1);
   user.save();

@@ -12,9 +12,10 @@ const addComment = (text, id, user) => {
   span.innerText = ` ${user.username}: ${text}`;
   span2.innerText = "❌";
   span2.addEventListener("click", handleDeleteComment);
-  img.src = `/${user.avatarUrl}`;
+  img.src = `${user.avatarUrl}`;
   newComment.className = "video__comment";
   newComment.dataset.id = id;
+  span2.className = "video__comment__deleteBtn";
 
   newComment.appendChild(img);
   newComment.appendChild(span);
