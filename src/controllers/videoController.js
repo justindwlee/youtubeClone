@@ -25,11 +25,12 @@ export const watch = async (req, res) => {
   if (!video) {
     return res.render("404", { pageTitle: "404 Video Not Found" });
   }
-  console.log(user.likedVideos);
-  const isLiked = user.likedVideos.some(
-    (id) => id.toString() === video.id.toString()
-  );
-  console.log(isLiked);
+  let isLiked;
+  if (user) {
+    isLiked = user.likedVideos.some(
+      (id) => id.toString() === video.id.toString()
+    );
+  }
   return res.render("videos/watch", { pageTitle: video.title, video, isLiked });
 };
 
@@ -169,8 +170,13 @@ export const registerView = async (req, res) => {
 };
 
 export const registerLikes = async (req, res) => {
-  const { id } = req.params;
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .json({ message: "You must be logged in to like a video" });
+  }
   const { _id: userId } = req.session.user;
+  const { id } = req.params;
   const video = await Video.findById(id);
   if (!video) {
     return res.sendStatus(404);
