@@ -13,6 +13,7 @@ export const home = async (req, res) => {
 
 export const watch = async (req, res) => {
   const { id } = req.params;
+  const { user } = req.session;
   const video = await Video.findById(id)
     .populate("owner")
     .populate({
@@ -24,7 +25,12 @@ export const watch = async (req, res) => {
   if (!video) {
     return res.render("404", { pageTitle: "404 Video Not Found" });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video });
+  console.log(user.likedVideos);
+  const isLiked = user.likedVideos.some(
+    (id) => id.toString() === video.id.toString()
+  );
+  console.log(isLiked);
+  return res.render("videos/watch", { pageTitle: video.title, video, isLiked });
 };
 
 export const getEdit = async (req, res) => {
@@ -160,6 +166,36 @@ export const registerView = async (req, res) => {
   video.meta.views = video.meta.views + 1;
   await video.save();
   return res.sendStatus(200);
+};
+
+export const registerLikes = async (req, res) => {
+  const { id } = req.params;
+  const { _id: userId } = req.session.user;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.sendStatus(404);
+  }
+  let isLiked = user.likedVideos.includes(id);
+  if (!isLiked) {
+    user.likedVideos.push(id);
+    video.meta.likes = video.meta.likes + 1;
+  } else {
+    user.likedVideos = user.likedVideos.filter(
+      (el) => el.toString() !== id.toString()
+    );
+    video.meta.likes = video.meta.likes - 1;
+  }
+  await video.save();
+  await user.save();
+  req.session.user = user;
+  return res.json({
+    liked: !isLiked,
+    likes: video.meta.likes,
+  });
 };
 
 export const createComment = async (req, res) => {

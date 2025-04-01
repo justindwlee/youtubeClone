@@ -51,7 +51,7 @@ export const postLogin = async (req, res) => {
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     req.flash("error", "The account does not exist.");
-    return res.status(400).render("login", {
+    return res.status(400).render("users/login", {
       pageTitle,
     });
   }

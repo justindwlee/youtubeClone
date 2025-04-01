@@ -30,6 +30,13 @@ block content
         small.video__owner Uploaded by 
             a(href=`/users/${video.owner._id}`)=video.owner.username
         small.video__createdAt=video.createdAt
+        div.video__likes
+            button.like-btn
+                if isLiked
+                    i.fas.fa-thumbs-up
+                else
+                    i.far.fa-thumbs-up
+                span=video.meta.likes
         div.video__description
             span=video.description
             div.hashtags

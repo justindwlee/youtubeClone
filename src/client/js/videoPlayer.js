@@ -12,6 +12,7 @@ const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 const deleteBtn = document.querySelector(".video__delete-btn");
+const likeBtn = document.querySelector(".like-btn");
 
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
@@ -133,6 +134,24 @@ const handleDeleteBtnClick = (event) => {
   }
 };
 
+const handleLikeBtnClick = async () => {
+  const { id } = videoContainer.dataset;
+  const response = await fetch(`/api/videos/${id}/likes`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update like");
+  }
+
+  const data = await response.json();
+  const likesNum = likeBtn.querySelector("span");
+  likesNum.innerText = data.likes;
+  const likesIcon = likeBtn.querySelector("i");
+  likesIcon.classList.toggle("fas", data.liked);
+  likesIcon.classList.toggle("far", !data.liked);
+};
+
 playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMuteClick);
 volumeRange.addEventListener("input", handleVolumeChange);
@@ -148,3 +167,4 @@ document.addEventListener("keydown", handleSpacebar);
 if (deleteBtn) {
   deleteBtn.addEventListener("click", handleDeleteBtnClick);
 }
+likeBtn.addEventListener("click", handleLikeBtnClick);
